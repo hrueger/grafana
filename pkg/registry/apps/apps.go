@@ -12,6 +12,7 @@ import (
 	"github.com/grafana/grafana/pkg/registry"
 	"github.com/grafana/grafana/pkg/registry/apps/advisor"
 	"github.com/grafana/grafana/pkg/registry/apps/alerting/notifications"
+	"github.com/grafana/grafana/pkg/registry/apps/alerting/rules"
 	"github.com/grafana/grafana/pkg/registry/apps/investigations"
 	"github.com/grafana/grafana/pkg/registry/apps/playlist"
 	"github.com/grafana/grafana/pkg/services/apiserver"
@@ -47,6 +48,7 @@ func ProvideBuilderRunners(
 	investigationAppProvider *investigations.InvestigationsAppProvider,
 	advisorAppProvider *advisor.AdvisorAppProvider,
 	alertingNotificationsAppProvider *notifications.AlertingNotificationsAppProvider,
+	alertingRulesAppProvider *rules.AlertingRulesAppProvider,
 	grafanaCfg *setting.Cfg,
 ) (*Service, error) {
 	cfgWrapper := func(ctx context.Context) (*rest.Config, error) {
@@ -76,6 +78,9 @@ func ProvideBuilderRunners(
 	}
 	if alertingNotificationsAppProvider != nil {
 		providers = append(providers, alertingNotificationsAppProvider)
+	}
+	if alertingRulesAppProvider != nil {
+		providers = append(providers, alertingRulesAppProvider)
 	}
 	apiGroupRunner, err = runner.NewAPIGroupRunner(cfg, providers...)
 
