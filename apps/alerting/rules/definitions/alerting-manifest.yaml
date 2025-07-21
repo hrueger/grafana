@@ -66,6 +66,7 @@ spec:
                                 type: string
                             type: object
                         missingSeriesEvalsToResolve:
+                            minimum: 0
                             type: integer
                         noDataState:
                             default: NoData

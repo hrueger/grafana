@@ -14,9 +14,8 @@ AlertRuleSpec: #RuleSpec & {
 	execErrState:                 ExecErrState
 	"for":                        string & #PromDuration
 	keepFiringFor:                string & #PromDuration
-	missingSeriesEvalsToResolve?: int
-
-	notificationSettings?: #NotificationSettings
+	missingSeriesEvalsToResolve?: int & >=0
+	notificationSettings?:        #NotificationSettings
 	annotations: {
 		[string]: TemplateString
 	}
