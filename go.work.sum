@@ -958,6 +958,8 @@ github.com/grafana/grafana/apps/alerting/notifications v0.0.0-20250416173722-ec1
 github.com/grafana/grafana/apps/alerting/notifications v0.0.0-20250506052906-7a2fc797fb4a/go.mod h1:VkX53kBiqIMHBoGgeEDJnzm5Nwcmv/726tuZuT5SvJY=
 github.com/grafana/grafana/apps/alerting/rules v0.0.0-20250625205002-4b02ac22a884 h1:eBuMFUW7gKeari4FKeRbvLaNO0AMmiBxSTBCl8seqDg=
 github.com/grafana/grafana/apps/alerting/rules v0.0.0-20250625205002-4b02ac22a884/go.mod h1:dnyn8aVgSsZXFk7G6vf5DEcxy4ZtzPR1e9XuZUs1z1k=
+github.com/grafana/grafana/apps/alerting/rules v0.0.0-20250721202255-5f630aa852f0 h1:slrXPFzaT2KZKfPClnH0dFRUqhVZo1mAsM1aWaVheAg=
+github.com/grafana/grafana/apps/alerting/rules v0.0.0-20250721202255-5f630aa852f0/go.mod h1:dnyn8aVgSsZXFk7G6vf5DEcxy4ZtzPR1e9XuZUs1z1k=
 github.com/grafana/grafana/apps/dashboard v0.0.0-20250616145019-8d27f12428cb/go.mod h1:OIlvNnUufYDhBXa4xK4CyzPI2C69ZJkHy5+aFDyPtXw=
 github.com/grafana/grafana/apps/dashboard v0.0.0-20250627191313-2f1a6ae1712b/go.mod h1:eR8wca74ADgxBrvX0uNpdB1qnPaGx/KhCm4Xj8oqHfQ=
 github.com/grafana/grafana/apps/investigation v0.0.0-20250121113133-e747350fee2d/go.mod h1:HQprw3MmiYj5OUV9CZnkwA1FKDZBmYACuAB3oDvUOmI=
