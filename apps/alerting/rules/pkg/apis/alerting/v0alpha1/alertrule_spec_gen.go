@@ -2,6 +2,11 @@
 
 package v0alpha1
 
+// TODO: validate that only one can specify source=true
+// & struct.MinFields(1) This doesn't work in Cue <v0.12.0 as per
+// +k8s:openapi-gen=true
+type AlertRuleQueryMap map[string]AlertRuleQuery
+
 // +k8s:openapi-gen=true
 type AlertRuleQuery struct {
 	QueryType         string                     `json:"queryType"`
@@ -57,14 +62,13 @@ type AlertRuleMuteTimeIntervalRef string
 // +k8s:openapi-gen=true
 type AlertRuleActiveTimeIntervalRef string
 
-// =~ figure out the regex for the template string
 // +k8s:openapi-gen=true
 type AlertRuleTemplateString string
 
 // +k8s:openapi-gen=true
 type AlertRuleSpec struct {
 	Title                       string                                     `json:"title"`
-	Data                        map[string]AlertRuleQuery                  `json:"data"`
+	Data                        AlertRuleQueryMap                          `json:"data"`
 	Paused                      *bool                                      `json:"paused,omitempty"`
 	Trigger                     AlertRuleIntervalTrigger                   `json:"trigger"`
 	NoDataState                 string                                     `json:"noDataState"`
@@ -81,7 +85,6 @@ type AlertRuleSpec struct {
 // NewAlertRuleSpec creates a new AlertRuleSpec object.
 func NewAlertRuleSpec() *AlertRuleSpec {
 	return &AlertRuleSpec{
-		Data:         map[string]AlertRuleQuery{},
 		Trigger:      *NewAlertRuleIntervalTrigger(),
 		NoDataState:  "NoData",
 		ExecErrState: "Error",

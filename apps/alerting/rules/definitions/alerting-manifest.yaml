@@ -19,9 +19,6 @@ spec:
                             type: object
                         data:
                             additionalProperties:
-                                description: |-
-                                    TODO: validate that only one can specify source=true
-                                    Note: any issues with go hash map key sorting?
                                 properties:
                                     datasourceUID:
                                         pattern: ^[a-zA-Z0-9_]+$
@@ -106,8 +103,11 @@ spec:
                         panelRef:
                             properties:
                                 dashboardUID:
+                                    minLength: 1
                                     type: string
                                 panelID:
+                                    exclusiveMinimum: true
+                                    minimum: 0
                                     type: integer
                             required:
                                 - dashboardUID
@@ -190,9 +190,6 @@ spec:
                     properties:
                         data:
                             additionalProperties:
-                                description: |-
-                                    TODO: validate that only one can specify source=true
-                                    Note: any issues with go hash map key sorting?
                                 properties:
                                     datasourceUID:
                                         pattern: ^[a-zA-Z0-9_]+$

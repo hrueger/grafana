@@ -2,6 +2,11 @@
 
 package v0alpha1
 
+// TODO: validate that only one can specify source=true
+// & struct.MinFields(1) This doesn't work in Cue <v0.12.0 as per
+// +k8s:openapi-gen=true
+type RecordingRuleQueryMap map[string]RecordingRuleQuery
+
 // +k8s:openapi-gen=true
 type RecordingRuleQuery struct {
 	QueryType         string                         `json:"queryType"`
@@ -49,14 +54,13 @@ func NewRecordingRuleIntervalTrigger() *RecordingRuleIntervalTrigger {
 // +k8s:openapi-gen=true
 type RecordingRulePromDuration string
 
-// =~ figure out the regex for the template string
 // +k8s:openapi-gen=true
 type RecordingRuleTemplateString string
 
 // +k8s:openapi-gen=true
 type RecordingRuleSpec struct {
 	Title               string                                 `json:"title"`
-	Data                map[string]RecordingRuleQuery          `json:"data"`
+	Data                RecordingRuleQueryMap                  `json:"data"`
 	Paused              *bool                                  `json:"paused,omitempty"`
 	Trigger             RecordingRuleIntervalTrigger           `json:"trigger"`
 	Metric              string                                 `json:"metric"`
@@ -67,7 +71,6 @@ type RecordingRuleSpec struct {
 // NewRecordingRuleSpec creates a new RecordingRuleSpec object.
 func NewRecordingRuleSpec() *RecordingRuleSpec {
 	return &RecordingRuleSpec{
-		Data:    map[string]RecordingRuleQuery{},
 		Trigger: *NewRecordingRuleIntervalTrigger(),
 		Labels:  map[string]RecordingRuleTemplateString{},
 	}

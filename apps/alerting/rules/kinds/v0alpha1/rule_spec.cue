@@ -6,16 +6,12 @@ import "time"
 
 #PromDuration: time.Duration & =~"^((([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?|0)$"
 
-TemplateString: string                       // =~ figure out the regex for the template string
+TemplateString: string
 #DatasourceUID: string & =~"^[a-zA-Z0-9_]+$" // TODO(@moustafab): validate regex for datasource UID
 
 #RuleSpec: {
-	title: string
-	data: {
-		// TODO: validate that only one can specify source=true
-		// Note: any issues with go hash map key sorting?
-		[string]: #Query
-	}
+	title:   string
+	data:    #QueryMap
 	paused?: bool
 	trigger: #IntervalTrigger
 	labels: {
@@ -35,6 +31,11 @@ TemplateString: string                       // =~ figure out the regex for the 
 	from: #PromDurationWMillis
 	to:   #PromDurationWMillis
 }
+
+// TODO: validate that only one can specify source=true
+#QueryMap: {
+	[string]: #Query
+} // & struct.MinFields(1) This doesn't work in Cue <v0.12.0 as per
 
 #Query: {
 	queryType:         string

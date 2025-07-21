@@ -59,7 +59,8 @@ func ConvertToK8sResource(
 		k8sRule.ObjectMeta.Labels["group"] = rule.RuleGroup
 	}
 
-	if rule.PanelID != nil && rule.DashboardUID != nil {
+	if rule.PanelID != nil && rule.DashboardUID != nil &&
+		*rule.PanelID > 0 && *rule.DashboardUID != "" {
 		k8sRule.Spec.PanelRef = &model.AlertRuleV0alpha1SpecPanelRef{
 			PanelID:      *rule.PanelID,
 			DashboardUID: *rule.DashboardUID,

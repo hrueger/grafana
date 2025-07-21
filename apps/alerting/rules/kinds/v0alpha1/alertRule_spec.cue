@@ -1,5 +1,7 @@
 package v0alpha1
 
+import "strings"
+
 NoDataState:  *"NoData" | "Ok" | "Alerting" | "KeepLast"
 ExecErrState: *"Error" | "Ok" | "Alerting" | "KeepLast"
 
@@ -22,8 +24,8 @@ AlertRuleSpec: #RuleSpec & {
 }
 
 #PanelRef: {
-	dashboardUID: string
-	panelID:      int
+	dashboardUID: string & strings.MinRunes(1)
+	panelID:      int & >0
 }
 
 // TODO(@moustafab): this should be imported from the notifications package

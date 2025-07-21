@@ -1,5 +1,11 @@
 // Code generated - EDITING IS FUTILE. DO NOT EDIT.
 
+// TODO: validate that only one can specify source=true
+// & struct.MinFields(1) This doesn't work in Cue <v0.12.0 as per
+export type QueryMap = Record<string, Query>;
+
+export const defaultQueryMap = (): QueryMap => ({});
+
 export interface Query {
 	queryType: string;
 	relativeTimeRange: RelativeTimeRange;
@@ -46,14 +52,13 @@ export type PromDuration = string;
 
 export const defaultPromDuration = (): PromDuration => ("");
 
-// =~ figure out the regex for the template string
 export type TemplateString = string;
 
 export const defaultTemplateString = (): TemplateString => ("");
 
 export interface Spec {
 	title: string;
-	data: Record<string, Query>;
+	data: QueryMap;
 	paused?: boolean;
 	trigger: IntervalTrigger;
 	metric: string;
@@ -63,7 +68,7 @@ export interface Spec {
 
 export const defaultSpec = (): Spec => ({
 	title: "",
-	data: {},
+	data: defaultQueryMap(),
 	trigger: defaultIntervalTrigger(),
 	metric: "",
 	labels: {},

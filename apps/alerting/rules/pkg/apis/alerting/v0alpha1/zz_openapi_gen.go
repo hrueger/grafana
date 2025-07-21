@@ -262,13 +262,6 @@ func schema_pkg_apis_alerting_v0alpha1_AlertRuleSpec(ref common.ReferenceCallbac
 							Ref:     ref("github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1.AlertRuleIntervalTrigger"),
 						},
 					},
-					"interval": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
 					"noDataState": {
 						SchemaProps: spec.SchemaProps{
 							Default: "",
@@ -344,7 +337,7 @@ func schema_pkg_apis_alerting_v0alpha1_AlertRuleSpec(ref common.ReferenceCallbac
 						},
 					},
 				},
-				Required: []string{"title", "data", "trigger", "interval", "noDataState", "execErrState", "for", "keepFiringFor", "annotations", "labels"},
+				Required: []string{"title", "data", "trigger", "noDataState", "execErrState", "for", "keepFiringFor", "annotations", "labels"},
 			},
 		},
 		Dependencies: []string{
@@ -783,13 +776,6 @@ func schema_pkg_apis_alerting_v0alpha1_RecordingRuleSpec(ref common.ReferenceCal
 							Ref:     ref("github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1.RecordingRuleIntervalTrigger"),
 						},
 					},
-					"interval": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
 					"metric": {
 						SchemaProps: spec.SchemaProps{
 							Default: "",
@@ -820,7 +806,7 @@ func schema_pkg_apis_alerting_v0alpha1_RecordingRuleSpec(ref common.ReferenceCal
 						},
 					},
 				},
-				Required: []string{"title", "data", "trigger", "interval", "metric", "labels", "targetDatasourceUID"},
+				Required: []string{"title", "data", "trigger", "metric", "labels", "targetDatasourceUID"},
 			},
 		},
 		Dependencies: []string{
