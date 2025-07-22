@@ -13,10 +13,6 @@ alertRuleKind: {
 }
 
 alertRulev0alpha1: alertRuleKind & {
-	codegen: {
-		ts: {enabled: true}
-		go: {enabled: true}
-	}
 	schema: {
 		spec: v0alpha1.AlertRuleSpec
 	}

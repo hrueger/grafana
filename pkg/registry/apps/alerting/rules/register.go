@@ -2,50 +2,78 @@ package rules
 
 import (
 	"context"
+	"fmt"
+
+	restclient "k8s.io/client-go/rest"
 
 	"github.com/grafana/grafana-app-sdk/app"
+	appsdkapiserver "github.com/grafana/grafana-app-sdk/k8s/apiserver"
 	"github.com/grafana/grafana-app-sdk/simple"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apiserver/pkg/authorization/authorizer"
 
-	rulesResource "github.com/grafana/grafana/apps/alerting/rules/pkg/apis"
-	model "github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1"
+	"github.com/grafana/grafana/apps/alerting/rules/pkg/apis"
+	rulesv0alpha1 "github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1"
 	rulesApp "github.com/grafana/grafana/apps/alerting/rules/pkg/app"
 	grafanarest "github.com/grafana/grafana/pkg/apiserver/rest"
 	"github.com/grafana/grafana/pkg/registry/apps/alerting/rules/alertrule"
 	"github.com/grafana/grafana/pkg/registry/apps/alerting/rules/recordingrule"
-	"github.com/grafana/grafana/pkg/services/accesscontrol"
-	"github.com/grafana/grafana/pkg/services/apiserver/builder/runner"
+	"github.com/grafana/grafana/pkg/services/apiserver/appinstaller"
 	"github.com/grafana/grafana/pkg/services/apiserver/endpoints/request"
 	"github.com/grafana/grafana/pkg/services/ngalert"
 	"github.com/grafana/grafana/pkg/setting"
 )
 
-type AlertingRulesAppProvider struct {
-	app.Provider
+var (
+	_ appsdkapiserver.AppInstaller       = (*AlertingRulesAppInstaller)(nil)
+	_ appinstaller.AuthorizerProvider    = (*AlertingRulesAppInstaller)(nil)
+	_ appinstaller.LegacyStorageProvider = (*AlertingRulesAppInstaller)(nil)
+	_ appinstaller.APIEnablementProvider = (*AlertingRulesAppInstaller)(nil)
+)
+
+type AlertingRulesAppInstaller struct {
+	appsdkapiserver.AppInstaller
+	cfg *setting.Cfg
+	ng  *ngalert.AlertNG
 }
 
-func RegisterApp(
+func RegisterAppInstaller(
 	cfg *setting.Cfg,
 	ng *ngalert.AlertNG,
-) *AlertingRulesAppProvider {
+) (*AlertingRulesAppInstaller, error) {
 	if ng.IsDisabled() {
-		return nil
+		return nil, fmt.Errorf("alerting rules app installer cannot be registered when ngalert is disabled")
 	}
 
-	appCfg := &runner.AppBuilderConfig{
-		Authorizer:          getAuthorizer(ng.Api.AccessControl),
-		LegacyStorageGetter: getLegacyStorage(request.GetNamespaceMapper(cfg), ng),
-		OpenAPIDefGetter:    model.GetOpenAPIDefinitions,
-		ManagedKinds:        rulesResource.GetKinds(),
+	installer := &AlertingRulesAppInstaller{
+		cfg: cfg,
+		ng:  ng,
 	}
 
-	return &AlertingRulesAppProvider{
-		Provider: simple.NewAppProvider(rulesResource.LocalManifest(), appCfg, rulesApp.New),
+	// specificConfig := &runner.AppBuilderConfig{
+	// 	Authorizer:          getAuthorizer(),
+	// 	LegacyStorageGetter: getLegacyStorage(request.GetNamespaceMapper(cfg), ng),
+	// 	OpenAPIDefGetter:    model.GetOpenAPIDefinitions,
+	// 	ManagedKinds:        rulesResource.GetKinds(),
+	// }
+
+	provider := simple.NewAppProvider(apis.LocalManifest(), nil, rulesApp.New)
+
+	appConfig := app.Config{
+		KubeConfig:   restclient.Config{}, // this will be overridden by the installer's InitializeApp method
+		ManifestData: *apis.LocalManifest().ManifestData,
 	}
+
+	i, err := appsdkapiserver.NewDefaultAppInstaller(provider, appConfig, apis.ManifestGoTypeAssociator, apis.ManifestCustomRouteResponsesAssociator)
+	if err != nil {
+		return nil, err
+	}
+	installer.AppInstaller = i
+	return installer, nil
 }
 
-func getAuthorizer(authz accesscontrol.AccessControl) authorizer.Authorizer {
+func (a *AlertingRulesAppInstaller) GetAuthorizer() authorizer.Authorizer {
+	authz := a.ng.Api.AccessControl
 	return authorizer.AuthorizerFunc(
 		func(ctx context.Context, a authorizer.Attributes) (authorizer.Decision, string, error) {
 			switch a.GetResource() {
@@ -59,15 +87,22 @@ func getAuthorizer(authz accesscontrol.AccessControl) authorizer.Authorizer {
 	)
 }
 
-func getLegacyStorage(namespacer request.NamespaceMapper, ng *ngalert.AlertNG) runner.LegacyStorageGetter {
-	return func(gvr schema.GroupVersionResource) grafanarest.Storage {
-		switch gvr {
-		case recordingrule.ResourceInfo.GroupVersionResource():
-			return recordingrule.NewStorage(*ng.Api.AlertRules, namespacer)
-		case alertrule.ResourceInfo.GroupVersionResource():
-			return alertrule.NewStorage(*ng.Api.AlertRules, namespacer)
-		default:
-			panic("unknown legacy storage requested: " + gvr.String())
-		}
+func (a *AlertingRulesAppInstaller) GetLegacyStorage(gvr schema.GroupVersionResource) grafanarest.Storage {
+	namespacer := request.GetNamespaceMapper(a.cfg)
+	switch gvr {
+	case recordingrule.ResourceInfo.GroupVersionResource():
+		return recordingrule.NewStorage(*a.ng.Api.AlertRules, namespacer)
+	case alertrule.ResourceInfo.GroupVersionResource():
+		return alertrule.NewStorage(*a.ng.Api.AlertRules, namespacer)
+	default:
+		panic("unknown legacy storage requested: " + gvr.String())
+	}
+}
+
+// GetAllowedV0Alpha1Resources returns the list of resources that are allowed to be accessed in v0alpha1.
+func (p *AlertingRulesAppInstaller) GetAllowedV0Alpha1Resources() []string {
+	return []string{
+		rulesv0alpha1.AlertRuleKind().Plural(),
+		rulesv0alpha1.RecordingRuleKind().Plural(),
 	}
 }

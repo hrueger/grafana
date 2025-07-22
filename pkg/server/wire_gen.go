@@ -689,7 +689,11 @@ func Initialize(cfg *setting.Cfg, opts Options, apiOpts api.ServerOptions) (*Ser
 	if err != nil {
 		return nil, err
 	}
-	v2 := appregistry.ProvideAppInstallers(playlistAppInstaller)
+	alertingRulesAppInstaller, err := rules.RegisterAppInstaller(cfg, alertNG)
+	if err != nil {
+		return nil, err
+	}
+	v2 := appregistry.ProvideAppInstallers(playlistAppInstaller, alertingRulesAppInstaller)
 	builderMetrics := builder.ProvideBuilderMetrics(registerer)
 	apiserverService, err := apiserver.ProvideService(cfg, featureToggles, routeRegisterImpl, tracingService, serverLockService, sqlStore, kvStore, middlewareHandler, scopedPluginDatasourceProvider, plugincontextProvider, pluginstoreService, dualwriteService, resourceClient, eventualRestConfigProvider, v, eventualRestConfigProvider, registerer, aggregatorRunner, v2, builderMetrics)
 	if err != nil {
@@ -708,8 +712,7 @@ func Initialize(cfg *setting.Cfg, opts Options, apiOpts api.ServerOptions) (*Ser
 	checkregistryService := checkregistry.ProvideService(service15, pluginstoreService, plugincontextProvider, middlewareHandler, plugincheckerService, repoManager, preinstallImpl, noop, provisionedpluginsNoop, ssosettingsimplService, cfg, pluginerrsStore)
 	advisorAppProvider := advisor2.RegisterApp(checkregistryService, cfg)
 	alertingNotificationsAppProvider := notifications2.RegisterApp(cfg, alertNG)
-	alertingRulesAppProvider := rules.RegisterApp(cfg, alertNG)
-	appregistryService, err := appregistry.ProvideBuilderRunners(apiserverService, eventualRestConfigProvider, featureToggles, investigationsAppProvider, advisorAppProvider, alertingNotificationsAppProvider, alertingRulesAppProvider, cfg)
+	appregistryService, err := appregistry.ProvideBuilderRunners(apiserverService, eventualRestConfigProvider, featureToggles, investigationsAppProvider, advisorAppProvider, alertingNotificationsAppProvider, cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -1248,7 +1251,11 @@ func InitializeForTest(t sqlutil.ITestDB, testingT interface {
 	if err != nil {
 		return nil, err
 	}
-	v2 := appregistry.ProvideAppInstallers(playlistAppInstaller)
+	alertingRulesAppInstaller, err := rules.RegisterAppInstaller(cfg, alertNG)
+	if err != nil {
+		return nil, err
+	}
+	v2 := appregistry.ProvideAppInstallers(playlistAppInstaller, alertingRulesAppInstaller)
 	builderMetrics := builder.ProvideBuilderMetrics(registerer)
 	apiserverService, err := apiserver.ProvideService(cfg, featureToggles, routeRegisterImpl, tracingService, serverLockService, sqlStore, kvStore, middlewareHandler, scopedPluginDatasourceProvider, plugincontextProvider, pluginstoreService, dualwriteService, resourceClient, eventualRestConfigProvider, v, eventualRestConfigProvider, registerer, aggregatorRunner, v2, builderMetrics)
 	if err != nil {
@@ -1267,8 +1274,7 @@ func InitializeForTest(t sqlutil.ITestDB, testingT interface {
 	checkregistryService := checkregistry.ProvideService(service15, pluginstoreService, plugincontextProvider, middlewareHandler, plugincheckerService, repoManager, preinstallImpl, noop, provisionedpluginsNoop, ssosettingsimplService, cfg, pluginerrsStore)
 	advisorAppProvider := advisor2.RegisterApp(checkregistryService, cfg)
 	alertingNotificationsAppProvider := notifications2.RegisterApp(cfg, alertNG)
-	alertingRulesAppProvider := rules.RegisterApp(cfg, alertNG)
-	appregistryService, err := appregistry.ProvideBuilderRunners(apiserverService, eventualRestConfigProvider, featureToggles, investigationsAppProvider, advisorAppProvider, alertingNotificationsAppProvider, alertingRulesAppProvider, cfg)
+	appregistryService, err := appregistry.ProvideBuilderRunners(apiserverService, eventualRestConfigProvider, featureToggles, investigationsAppProvider, advisorAppProvider, alertingNotificationsAppProvider, cfg)
 	if err != nil {
 		return nil, err
 	}

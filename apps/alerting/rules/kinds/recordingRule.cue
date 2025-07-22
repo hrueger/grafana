@@ -13,10 +13,6 @@ recordingRuleKind: {
 }
 
 recordingRulev0alpha1: recordingRuleKind & {
-	codegen: {
-		ts: {enabled: true}
-		go: {enabled: true}
-	}
 	schema: {
 		spec: v0alpha1.RecordingRuleSpec
 	}
