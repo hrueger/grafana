@@ -128,20 +128,20 @@ func (b *IdentityAccessManagementAPIBuilder) UpdateAPIGroupInfo(apiGroupInfo *ge
 	userResource := legacyiamv0.UserResourceInfo
 	legacyStore := user.NewLegacyStore(b.store, b.legacyAccessClient)
 
-	// TODO: Figure out what's missing for the DualWriter setup in a MT setup
+	// TODO: @cinaglia - Comment this back out until MT mode issue is resolved
 	// MT app is unable to start if DW is configured
-	// store, err := grafanaregistry.NewRegistryStore(opts.Scheme, userResource, opts.OptsGetter)
-	// if err != nil {
-	// 	return err
-	// }
+	store, err := grafanaregistry.NewRegistryStore(opts.Scheme, userResource, opts.OptsGetter)
+	if err != nil {
+		return err
+	}
 
-	// dw, err := opts.DualWriteBuilder(userResource.GroupResource(), legacyStore, store)
-	// if err != nil {
-	// 	return err
-	// }
+	dw, err := opts.DualWriteBuilder(userResource.GroupResource(), legacyStore, store)
+	if err != nil {
+		return err
+	}
 
-	// storage[userResource.StoragePath()] = dw
-	storage[userResource.StoragePath()] = legacyStore
+	storage[userResource.StoragePath()] = dw
+	// storage[userResource.StoragePath()] = legacyStore
 	storage[userResource.StoragePath("teams")] = user.NewLegacyTeamMemberREST(b.store)
 
 	serviceAccountResource := legacyiamv0.ServiceAccountResourceInfo
@@ -241,20 +241,18 @@ func (b *IdentityAccessManagementAPIBuilder) GetAuthorizer() authorizer.Authoriz
 // TODO: https://github.com/grafana/grafana/blob/main/apps/playlist/pkg/app/app.go#L62
 func (b *IdentityAccessManagementAPIBuilder) Validate(ctx context.Context, a admission.Attributes, o admission.ObjectInterfaces) (err error) {
 	switch a.GetOperation() {
-	case admission.Create:
+	case admission.Create, admission.Update:
 		if a.GetKind() == legacyiamv0.UserResourceInfo.GroupVersionKind() {
-			return b.validateCreateUser(ctx, a, o)
+			return b.validateUser(ctx, a, o)
 		}
 		return nil
 	case admission.Connect:
 	case admission.Delete:
-	case admission.Update:
-		return nil
 	}
 	return nil
 }
 
-func (b *IdentityAccessManagementAPIBuilder) validateCreateUser(_ context.Context, a admission.Attributes, o admission.ObjectInterfaces) error {
+func (b *IdentityAccessManagementAPIBuilder) validateUser(_ context.Context, a admission.Attributes, o admission.ObjectInterfaces) error {
 	userObj, ok := a.GetObject().(*iamv0.User)
 	if !ok {
 		return nil
@@ -272,12 +270,10 @@ func (b *IdentityAccessManagementAPIBuilder) validateCreateUser(_ context.Contex
 // TODO: https://github.com/grafana/grafana/blob/main/apps/playlist/pkg/app/app.go#L62
 func (b *IdentityAccessManagementAPIBuilder) Mutate(ctx context.Context, a admission.Attributes, o admission.ObjectInterfaces) (err error) {
 	switch a.GetOperation() {
-	case admission.Create:
+	case admission.Create, admission.Update:
 		if a.GetKind() == legacyiamv0.UserResourceInfo.GroupVersionKind() {
 			return b.mutateUser(ctx, a, o)
 		}
-		return nil
-	case admission.Update:
 		return nil
 	case admission.Delete:
 		return nil
@@ -300,6 +296,8 @@ func (b *IdentityAccessManagementAPIBuilder) mutateUser(_ context.Context, a adm
 	if userObj.Spec.Login == "" {
 		userObj.Spec.Login = userObj.Spec.Email
 	}
+
+	// TODO: Verify whether this behavior is correct.
 	if userObj.Spec.Email == "" {
 		userObj.Spec.Email = userObj.Spec.Login
 	}
