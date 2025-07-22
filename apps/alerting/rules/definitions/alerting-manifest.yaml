@@ -5,11 +5,13 @@ metadata:
 spec:
     appName: alerting
     group: rules.alerting.grafana.app
-    kinds:
-        - kind: AlertRule
-          scope: Namespaced
-          versions:
-            - name: v0alpha1
+    versions:
+        - name: v0alpha1
+          served: true
+          kinds:
+            - kind: AlertRule
+              plural: AlertRules
+              scope: Namespaced
               schema:
                 spec:
                     properties:
@@ -181,11 +183,10 @@ spec:
                 - spec.panelRef.dashboardUID
                 - spec.panelRef.panelID
                 - spec.notificationSettings.receiver
-          conversion: false
-        - kind: RecordingRule
-          scope: Namespaced
-          versions:
-            - name: v0alpha1
+              conversion: false
+            - kind: RecordingRule
+              plural: RecordingRules
+              scope: Namespaced
               schema:
                 spec:
                     properties:
@@ -290,4 +291,5 @@ spec:
               selectableFields:
                 - spec.title
                 - spec.paused
-          conversion: false
+              conversion: false
+    preferredVersion: ""

@@ -4,30 +4,28 @@ import (
 	"github.com/grafana/grafana/apps/alerting/rules/kinds/v0alpha1"
 )
 
-recordingRule: {
+recordingRuleKind: {
 	kind: "RecordingRule"
 	apiResource: {
 		groupOverride: "rules.alerting.grafana.app"
 	}
 	pluralName: "RecordingRules"
-	current:    "v0alpha1"
+}
+
+recordingRulev0alpha1: recordingRuleKind & {
 	codegen: {
 		ts: {enabled: true}
 		go: {enabled: true}
 	}
-	versions: {
-		"v0alpha1": {
-			schema: {
-				spec: v0alpha1.RecordingRuleSpec
-			}
-			selectableFields: [
-				"spec.title",
-				"spec.paused",
-				// FIXME(@moustafab): not sure why these fields are being considered structs... Bug in codegen
-				// "spec.metric",
-				// "spec.targetDatasourceUID",
-				// TODO: add status fields for filtering
-			]
-		}
+	schema: {
+		spec: v0alpha1.RecordingRuleSpec
 	}
+	selectableFields: [
+		"spec.title",
+		"spec.paused",
+		// FIXME(@moustafab): not sure why these fields are being considered structs... Bug in codegen
+		// "spec.metric",
+		// "spec.targetDatasourceUID",
+		// TODO: add status fields for filtering
+	]
 }

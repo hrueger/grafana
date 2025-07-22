@@ -18,7 +18,4 @@ var WireSet = wire.NewSet(
 	advisor.RegisterApp,
 	notifications.RegisterApp,
 	rules.RegisterApp,
-	wire.Bind(new(checkregistry.CheckService), new(*checkregistry.Service)),
 )
-
-// http://localhost:3000/apis/notifications.alerting.grafana.app/v0alpha1/namespaces/default/receivers
