@@ -31,12 +31,17 @@ func alertRuleToModelsAlertRule(ar alertRule, l log.Logger) (models.AlertRule, e
 		NamespaceUID:                ar.NamespaceUID,
 		DashboardUID:                ar.DashboardUID,
 		PanelID:                     ar.PanelID,
-		RuleGroup:                   ar.RuleGroup,
 		RuleGroupIndex:              ar.RuleGroupIndex,
 		For:                         ar.For,
 		KeepFiringFor:               ar.KeepFiringFor,
 		IsPaused:                    ar.IsPaused,
 		MissingSeriesEvalsToResolve: ar.MissingSeriesEvalsToResolve,
+	}
+
+	if ar.RuleGroup == "" {
+		result.RuleGroup = models.NoGroupRuleGroup
+	} else {
+		result.RuleGroup = ar.RuleGroup
 	}
 
 	if ar.UpdatedBy != nil {
@@ -121,7 +126,6 @@ func alertRuleFromModelsAlertRule(ar models.AlertRule) (alertRule, error) {
 		NamespaceUID:                ar.NamespaceUID,
 		DashboardUID:                ar.DashboardUID,
 		PanelID:                     ar.PanelID,
-		RuleGroup:                   ar.RuleGroup,
 		RuleGroupIndex:              ar.RuleGroupIndex,
 		NoDataState:                 ar.NoDataState.String(),
 		ExecErrState:                ar.ExecErrState.String(),
@@ -129,6 +133,12 @@ func alertRuleFromModelsAlertRule(ar models.AlertRule) (alertRule, error) {
 		KeepFiringFor:               ar.KeepFiringFor,
 		IsPaused:                    ar.IsPaused,
 		MissingSeriesEvalsToResolve: ar.MissingSeriesEvalsToResolve,
+	}
+
+	if ar.RuleGroup == models.NoGroupRuleGroup {
+		result.RuleGroup = ""
+	} else {
+		result.RuleGroup = ar.RuleGroup
 	}
 
 	if ar.UpdatedBy != nil {

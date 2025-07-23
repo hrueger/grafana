@@ -613,13 +613,11 @@ func (st DBstore) ListAlertRules(ctx context.Context, query *ngmodels.ListAlertR
 		if len(query.RuleGroups) > 0 {
 			groupsMap = make(map[string]struct{})
 			for i, group := range query.RuleGroups {
-				g := group
 				// replace NoGroupRuleGroup with empty string for IN clause
 				if group == ngmodels.NoGroupRuleGroup {
-					g = ""
-					query.RuleGroups[i] = g
+					query.RuleGroups[i] = ""
 				}
-				groupsMap[g] = struct{}{}
+				groupsMap[group] = struct{}{}
 			}
 
 			args, in := getINSubQueryArgs(query.RuleGroups)
@@ -724,10 +722,6 @@ func (st DBstore) ListAlertRules(ctx context.Context, query *ngmodels.ListAlertR
 				if _, ok := groupsMap[converted.RuleGroup]; !ok {
 					continue
 				}
-			}
-			// Use the sentinel rule group name for the "no group" rule group.
-			if converted.RuleGroup == "" {
-				converted.RuleGroup = ngmodels.NoGroupRuleGroup
 			}
 
 			alertRules = append(alertRules, &converted)
