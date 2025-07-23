@@ -63,8 +63,9 @@ func ConvertToK8sResource(
 				From: model.RecordingRulePromDurationWMillis(query.RelativeTimeRange.From.String()),
 				To:   model.RecordingRulePromDurationWMillis(query.RelativeTimeRange.To.String()),
 			},
-			Model:  query.Model,
-			Source: util.Pointer(rule.Condition == query.RefID),
+			DatasourceUID: model.RecordingRuleDatasourceUID(query.DatasourceUID),
+			Model:         query.Model,
+			Source:        util.Pointer(rule.Condition == query.RefID),
 		}
 	}
 
