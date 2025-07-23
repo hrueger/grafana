@@ -3610,10 +3610,10 @@ __metadata:
   linkType: soft
 
 "@grafana/scenes-react@npm:^6.27.2":
-  version: 6.27.2
-  resolution: "@grafana/scenes-react@npm:6.27.2"
+  version: 6.28.0
+  resolution: "@grafana/scenes-react@npm:6.28.0"
   dependencies:
-    "@grafana/scenes": "npm:6.27.2"
+    "@grafana/scenes": "npm:6.28.0"
     lru-cache: "npm:^10.2.2"
     react-use: "npm:^17.4.0"
   peerDependencies:
@@ -3625,13 +3625,13 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
     react-router-dom: ^6.28.0
-  checksum: 10/415186350304d999a13fa1e66f8bb7675cb28d5174a9449b8cb3d6a25efaecfc74a0e2e69cde9513f6fd9cac9bd2891c12e93a974ec15cfa0d6d04e5b95b5306
+  checksum: 10/f41db695de5f42e7480234b8f5c60d5c907756d52024b5aef0ec6423e4a2c0ea05278613549244986eeb703da700de5feaed2bcad9fba9855f1a2974a07adaa9
   languageName: node
   linkType: hard
 
-"@grafana/scenes@npm:6.27.2, @grafana/scenes@npm:^6.27.2":
-  version: 6.27.2
-  resolution: "@grafana/scenes@npm:6.27.2"
+"@grafana/scenes@npm:6.28.0, @grafana/scenes@npm:^6.27.2":
+  version: 6.28.0
+  resolution: "@grafana/scenes@npm:6.28.0"
   dependencies:
     "@floating-ui/react": "npm:^0.26.16"
     "@leeoniya/ufuzzy": "npm:^1.0.16"
@@ -3651,7 +3651,7 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
     react-router-dom: ^6.28.0
-  checksum: 10/8ba3d6c9b29de32a943a4a53511822f27eb51b35270368f0b9d80208eab50ae8767c6b372a7c7779a213618eab24bbb3e441dde42b038fc0a2078989879e0d14
+  checksum: 10/5bc8af3c268a87a1c158e826ca64f24c7f2db6693923179320c06a029a77e64e90209ae2d6a9df15c2244edaabf4b223b46af3f7f59163488b8aafb9a75c3e5a
   languageName: node
   linkType: hard
 
